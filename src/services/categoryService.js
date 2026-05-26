@@ -1,14 +1,17 @@
-import axios from 'axios';
+import api from '@/services/api'
+import { resolveMediaUrl } from '@/services/media'
 
-// Thay đổi URL theo cổng backend Laravel của bạn (thường là 8000)
-const API_URL = 'http://localhost:8000/api'; 
+function normalizeCategory(category = {}) {
+  return {
+    ...category,
+    image_url: category.image_url ?? resolveMediaUrl(category.image),
+  }
+}
 
-export const getCategories = async () => {
-    try {
-        const response = await axios.get(`${API_URL}/categories`);
-        return response.data.data; 
-    } catch (error) {
-        console.error("Lỗi khi fetch danh mục:", error);
-        throw error;
-    }
-};
+export async function getCategories() {
+  const response = await api.get('/categories')
+  const payload = response.data
+  const categories = Array.isArray(payload) ? payload : payload?.data ?? []
+
+  return categories.map(normalizeCategory)
+}

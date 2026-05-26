@@ -50,7 +50,7 @@ const EventDetailPage = () => {
                 const response = await axios.get(`http://localhost:8000/api/events/${id}`, config);
                 setEvent(response.data.data);
                 setUserRegistration(response.data.user_registration || null);
-            } catch (err) {
+            } catch (err) {Z
                 console.error("Error fetching event details", err);
                 setError(err.response?.data?.message || "Không thể tải dữ liệu sự kiện.");
             } finally {
