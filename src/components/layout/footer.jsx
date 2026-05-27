@@ -23,17 +23,18 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-gray-900 mb-4 text-lg">Về NMSuperMarket</h3>
             <ul className="space-y-3 text-sm text-gray-500">
-              <li><Link to="#" className="hover:text-primary transition-colors">Giới thiệu</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">Tuyển dụng</Link></li>
-              <li><Link to="#" className="hover:text-primary transition-colors">Điều khoản</Link></li>
+              <li><Link to="/products" className="hover:text-primary transition-colors">Sản phẩm</Link></li>
+              <li><Link to="/about" className="hover:text-primary transition-colors">Giới thiệu</Link></li>
+              <li><Link to="/careers" className="hover:text-primary transition-colors">Tuyển dụng</Link></li>
+              <li><Link to="/terms" className="hover:text-primary transition-colors">Điều khoản</Link></li>
             </ul>
           </div>
           <div>
             <h3 className="font-bold text-gray-900 mb-4 text-lg">Liên Hệ</h3>
             <ul className="space-y-3 text-sm text-gray-500">
-              <li>📍 123 Đường Số 1, Quận 1, TP.HCM</li>
-              <li>📞 Hotline: 1900 1234</li>
-              <li>✉️ Email: hotro@nmsupermarket.vn</li>
+              <li>📍 99 Tô Hiến Thành, Sơn Trà, Đà Nẵng</li>
+              <li>📞 Hotline: 0933380408</li>
+              <li>✉️ Email: [EMAIL_ADDRESS]</li>
             </ul>
           </div>
         </div>

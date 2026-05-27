@@ -5,17 +5,18 @@ import Footer from '../components/layout/Footer';
 import CategoryNav from '../components/layout/CategoryNav';
 import ProductCard from '../components/customer/ProductCard';
 import { useProductStore } from '../store/productStore';
+import client from '../api/client';
 
 export default function CategoryPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
-  const { products, categories, fetchProducts, fetchCategories, isLoading } = useProductStore();
+  const { categories, fetchCategories } = useProductStore();
   const [category, setCategory] = useState(null);
   const [categoryProducts, setCategoryProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     fetchCategories();
-    fetchProducts();
   }, []);
 
   useEffect(() => {
@@ -23,13 +24,24 @@ export default function CategoryPage() {
       const foundCat = categories.find(c => c.slug === slug);
       if (foundCat) {
         setCategory(foundCat);
-        setCategoryProducts(products.filter(p => p.category_id === foundCat.id));
+        // Gọi API riêng với category_id để lấy đúng tất cả sản phẩm, không bị giới hạn bởi paginate
+        setIsLoading(true);
+        client.get('/products', { params: { category_id: foundCat.id, per_page: 100 } })
+          .then(res => {
+            const data = res.data?.data?.data || res.data?.data || [];
+            // Ép kiểu để đảm bảo so sánh đúng
+            setCategoryProducts(data.filter(p => Number(p.category_id) === Number(foundCat.id)));
+          })
+          .catch(err => {
+            console.error('Lỗi fetch sản phẩm theo danh mục:', err);
+            setCategoryProducts([]);
+          })
+          .finally(() => setIsLoading(false));
       } else {
-        // Fallback if category not found
         setCategory({ name: 'Danh mục không tồn tại' });
       }
     }
-  }, [slug, categories, products]);
+  }, [slug, categories]);
 
   return (
     <div className="min-h-screen flex flex-col bg-bg">

@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ShoppingCart } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Button from '../ui/Button';
 import { useCartStore } from '../../store/cartStore';
 import useAuthStore from '../../store/authStore';
-import { useState } from 'react';
+const PRODUCT_PLACEHOLDER = 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80&fit=crop';
 
 export default function ProductCard({ product }) {
   const hasSale = product.sale_price && product.sale_price < product.price;
@@ -43,7 +43,7 @@ export default function ProductCard({ product }) {
           </div>
         )}
         <img 
-          src={product.thumbnail || 'https://placehold.co/400x400?text=No+Image'} 
+          src={product.thumbnail || PRODUCT_PLACEHOLDER} 
           alt={product.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />

@@ -6,9 +6,13 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProductDetail from './pages/ProductDetail';
 import CategoryPage from './pages/CategoryPage';
+import ProductsPage from './pages/ProductsPage';
 import ProfilePage from './pages/ProfilePage';
 import OrdersPage from './pages/OrdersPage';
 import ChatbotWidget from './components/customer/Chatbot/ChatbotWidget';
+import AboutPage from './pages/AboutPage';
+import CareersPage from './pages/CareersPage';
+import TermsPage from './pages/TermsPage';
 import useAuthStore from './store/authStore';
 
 const ProtectedRoute = ({ children }) => {
@@ -32,6 +36,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/products" element={<ProductsPage />} />
         <Route path="/products/:id" element={<ProductDetail />} />
         <Route path="/categories/:slug" element={<CategoryPage />} />
         <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
@@ -40,6 +45,9 @@ function App() {
         <Route path="/orders" element={<ProtectedRoute><OrdersPage /></ProtectedRoute>} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/payment/return" element={<PaymentReturn />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/careers" element={<CareersPage />} />
+        <Route path="/terms" element={<TermsPage />} />
       </Routes>
       <ChatbotWidget />
     </BrowserRouter>

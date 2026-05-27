@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingCart, Search, User, Store } from 'lucide-react';
+import { ShoppingCart, User, Store, Package } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '@/store/authStore';
 import { useCartStore } from '@/store/cartStore';
@@ -25,42 +25,58 @@ export default function Header() {
     logout();
     navigate('/login');
   };
+
   return (
     <header className="bg-primary text-white sticky top-0 z-50 shadow-md">
-      <div className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight hover:opacity-90 transition">
+      <div className="container mx-auto px-4 py-3 flex items-center justify-between gap-6">
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-2 text-2xl font-bold tracking-tight hover:opacity-90 transition shrink-0">
           <Store size={32} />
           <span>NMSuperMarket</span>
         </Link>
-        
-        <div className="flex-1 max-w-xl mx-8 relative hidden md:block">
-          <input 
-            type="text" 
-            placeholder="Tìm kiếm sản phẩm, danh mục..." 
-            className="w-full pl-4 pr-10 py-2 rounded-full text-text focus:outline-none shadow-inner"
-          />
-          <Search className="absolute right-4 top-2.5 text-gray-400 cursor-pointer" size={20} />
-        </div>
 
-        <div className="flex items-center gap-6">
+        {/* Nav links - center */}
+        <nav className="hidden md:flex items-center gap-1">
+          <Link
+            to="/products"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold hover:bg-white/20 transition-colors"
+          >
+            <Package size={17} />
+            Sản phẩm
+          </Link>
+          <Link to="/about" className="px-4 py-2 rounded-full text-sm font-semibold hover:bg-white/20 transition-colors">
+            Giới thiệu
+          </Link>
+          <Link to="/careers" className="px-4 py-2 rounded-full text-sm font-semibold hover:bg-white/20 transition-colors">
+            Tuyển dụng
+          </Link>
+          <Link to="/terms" className="px-4 py-2 rounded-full text-sm font-semibold hover:bg-white/20 transition-colors">
+            Điều khoản
+          </Link>
+        </nav>
+
+        {/* Right: User + Cart */}
+        <div className="flex items-center gap-5 shrink-0">
           {token && user ? (
             <div className="group relative">
               <div className="flex items-center gap-2 cursor-pointer hover:text-green-100 transition-colors">
-                <img src={user.avatar || 'https://via.placeholder.com/40'} alt="Avatar" className="w-8 h-8 rounded-full border border-white" />
+                <img src={user.avatar || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) + '&background=16a34a&color=fff'} alt="Avatar" className="w-8 h-8 rounded-full border-2 border-white/70" />
                 <span className="hidden sm:inline font-medium">{user.name}</span>
               </div>
-              <div className="absolute right-0 mt-2 w-48 bg-white text-text rounded-md shadow-lg py-2 hidden group-hover:block z-50">
-                <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">Thông tin tài khoản</Link>
-                <Link to="/orders" className="block px-4 py-2 hover:bg-gray-100">Đơn hàng của tôi</Link>
-                <button onClick={handleLogout} className="w-full text-left px-4 py-2 hover:bg-gray-100 text-red-500 font-medium">Đăng xuất</button>
+              <div className="absolute right-0 mt-2 w-52 bg-white text-text rounded-xl shadow-xl py-2 hidden group-hover:block z-50 border border-gray-100">
+                <Link to="/profile" className="flex items-center gap-2 px-4 py-2.5 hover:bg-gray-50 text-sm">👤 Thông tin tài khoản</Link>
+                <Link to="/orders" className="flex items-center gap-2 px-4 py-2.5 hover:bg-gray-50 text-sm">📦 Đơn hàng của tôi</Link>
+                <div className="border-t border-gray-100 my-1" />
+                <button onClick={handleLogout} className="w-full text-left flex items-center gap-2 px-4 py-2.5 hover:bg-red-50 text-red-500 font-medium text-sm">🚪 Đăng xuất</button>
               </div>
             </div>
           ) : (
             <Link to="/login" className="flex items-center gap-2 hover:text-green-100 transition-colors">
-              <User size={24} />
-              <span className="hidden sm:inline font-medium">Đăng nhập</span>
+              <User size={22} />
+              <span className="hidden sm:inline font-medium text-sm">Đăng nhập</span>
             </Link>
           )}
+
           <Link to="/checkout" className="flex items-center gap-2 hover:text-green-100 transition-colors relative">
             <ShoppingCart size={24} />
             {totalItems > 0 && (
@@ -68,7 +84,7 @@ export default function Header() {
                 {totalItems}
               </span>
             )}
-            <span className="hidden sm:inline font-medium">Giỏ hàng</span>
+            <span className="hidden sm:inline font-medium text-sm">Giỏ hàng</span>
           </Link>
         </div>
       </div>
