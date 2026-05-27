@@ -14,16 +14,11 @@ export const useAuthStore = create(
       clearAuth: () => set({ user: null, token: null }),
     }),
     {
-      name: 'auth-storage-attendee',
+      name: 'auth-storage-nmsupermarket',
     }
   )
 );
 
 export const useIsLoggedIn = () => useAuthStore((state) => !!state.token);
-
-export const useIsAttendee = () => useAuthStore((state) => {
-  const roleName = typeof state.user?.role === 'object' ? state.user?.role?.name : state.user?.role;
-  return roleName === 'attendee';
-});
 
 export default useAuthStore;

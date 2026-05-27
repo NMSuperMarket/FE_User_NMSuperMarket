@@ -2,8 +2,8 @@ import axios from 'axios'
 import useAuthStore from '@/store/authStore'
 
 /**
- * Axios Instance — FE_Attendee
- * Cấu hình HTTP client gọi đến Laravel API (BE_DANAEventpark)
+ * Axios Instance — FE_User
+ * Cấu hình HTTP client gọi đến Laravel API (BE_NMSuperMarket)
  *
  * Features:
  *  - baseURL trỏ đến BE Laravel port 8000

@@ -1,28 +1,46 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-
-const Footer = () => {
+export default function Footer() {
   return (
-    <footer className="bg-[#1A3138] text-white py-20 px-4">
-      <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-3xl font-bold text-[#E76241] mb-6">EventSpark</h2>
-        <p className="text-gray-400 max-w-xl mx-auto mb-10 leading-relaxed">
-          Nền tảng tổ chức và quản lý sự kiện hàng đầu. Kết nối đam mê và tạo ra những khoảng khắc đáng nhớ.
-        </p>
-        
-        <div className="flex flex-wrap justify-center gap-x-12 gap-y-4 mb-12 font-medium text-sm">
-          {['Khám phá', 'Dành cho nhà tổ chức', 'Về chúng tôi', 'Trung tâm trợ giúp'].map((item) => (
-            <a key={item} href="#" className="hover:text-[#E76241] transition-colors">{item}</a>
-          ))}
+    <footer className="bg-white border-t border-gray-200 pt-12 pb-8 mt-auto">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div>
+            <Link to="/" className="text-2xl font-bold tracking-tight text-primary mb-4 block"> <img src="/src/assets/logo.png" alt="" /> NMSuperMarket</Link>
+            <p className="text-gray-500 mb-4 text-sm leading-relaxed">
+              Hệ thống siêu thị mini cung cấp thực phẩm tươi sạch, nhu yếu phẩm thiết yếu. Giao hàng nhanh chóng 2h.
+            </p>
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-900 mb-4 text-lg">Chăm Sóc Khách Hàng</h3>
+            <ul className="space-y-3 text-sm text-gray-500">
+              <li><Link to="#" className="hover:text-primary transition-colors">Trung tâm hỗ trợ</Link></li>
+              <li><Link to="#" className="hover:text-primary transition-colors">Hướng dẫn mua hàng</Link></li>
+              <li><Link to="#" className="hover:text-primary transition-colors">Hướng dẫn thanh toán</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-900 mb-4 text-lg">Về NMSuperMarket</h3>
+            <ul className="space-y-3 text-sm text-gray-500">
+              <li><Link to="#" className="hover:text-primary transition-colors">Giới thiệu</Link></li>
+              <li><Link to="#" className="hover:text-primary transition-colors">Tuyển dụng</Link></li>
+              <li><Link to="#" className="hover:text-primary transition-colors">Điều khoản</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-900 mb-4 text-lg">Liên Hệ</h3>
+            <ul className="space-y-3 text-sm text-gray-500">
+              <li>📍 123 Đường Số 1, Quận 1, TP.HCM</li>
+              <li>📞 Hotline: 1900 1234</li>
+              <li>✉️ Email: hotro@nmsupermarket.vn</li>
+            </ul>
+          </div>
         </div>
-        
-        <div className="w-full h-[1px] bg-gray-700/50 mb-8" />
-        
-        <p className="text-xs text-gray-500 uppercase tracking-widest">
-          @ EventSpark 2026. All right reserved.
-        </p>
+        <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-gray-400 text-sm">© 2026 NMSuperMarket. All rights reserved.</p>
+        </div>
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}
