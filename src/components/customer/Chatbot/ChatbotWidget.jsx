@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { MessageSquare, X, Send, Bot, User, RefreshCw, Loader2 } from 'lucide-react';
-import axios from 'axios';
+import client from '@/api/client';
 import ProductCard from '../ProductCard';
 
 export default function ChatbotWidget() {
@@ -28,14 +28,14 @@ export default function ChatbotWidget() {
 
   const callApi = async (userMessage, history) => {
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/chatbot`, {
+      const response = await client.post('/chatbot', {
         message: userMessage,
         history: history.slice(1).map(m => ({ role: m.role, content: m.content }))
       });
       const { reply, suggested_products } = response.data.data;
       return { success: true, reply, products: suggested_products };
     } catch (error) {
-      console.error(error);
+      console.error('Chatbot error:', error);
       return { success: false };
     }
   };
