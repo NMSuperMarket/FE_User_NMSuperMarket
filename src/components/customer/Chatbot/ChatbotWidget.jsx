@@ -1,12 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { MessageSquare, X, Send, Bot, User, RefreshCw, Loader2 } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { MessageSquare, X, Send, Bot, RefreshCw, Loader2, Trash2 } from 'lucide-react';
 import client from '@/api/client';
+import useAuthStore from '@/store/authStore';
 import ProductCard from '../ProductCard';
 
 export default function ChatbotWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuthStore();
+  const storageKey = `chat_history_${user?.id || 'guest'}`;
+  const prevStorageKeyRef = useRef(storageKey);
+
   const [messages, setMessages] = useState(() => {
-    const saved = localStorage.getItem('chat_history');
+    const currentUser = useAuthStore.getState().user;
+    const initialKey = `chat_history_${currentUser?.id || 'guest'}`;
+    const saved = localStorage.getItem(initialKey);
     return saved ? JSON.parse(saved) : [
       { role: 'model', content: 'Xin chào! Tôi có thể giúp bạn tìm sản phẩm hoặc trả lời câu hỏi về NMSuperMarket.', products: [] }
     ];
@@ -21,19 +28,58 @@ export default function ChatbotWidget() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // 1. Nạp lại lịch sử chat khi thay đổi tài khoản đăng nhập (user thay đổi)
+  useEffect(() => {
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      setMessages(JSON.parse(saved));
+    } else {
+      setMessages([
+        { role: 'model', content: 'Xin chào! Tôi có thể giúp bạn tìm sản phẩm hoặc trả lời câu hỏi về NMSuperMarket.', products: [] }
+      ]);
+    }
+    // Cập nhật lại ref để đồng bộ khóa lưu lịch sử đang hoạt động
+    prevStorageKeyRef.current = storageKey;
+  }, [user, storageKey]);
+
+  // 2. Lưu lịch sử chat khi danh sách tin nhắn thay đổi
   useEffect(() => {
     scrollToBottom();
-    localStorage.setItem('chat_history', JSON.stringify(messages));
-  }, [messages, isOpen]);
+    // Tránh lưu đè lịch sử của tài khoản này sang tài khoản khác khi vừa chuyển đổi
+    if (prevStorageKeyRef.current === storageKey) {
+      localStorage.setItem(storageKey, JSON.stringify(messages));
+    }
+  }, [messages, storageKey, isOpen]);
+
+  const handleClearHistory = () => {
+    const defaultMessages = [
+      { role: 'model', content: 'Xin chào! Tôi có thể giúp bạn tìm sản phẩm hoặc trả lời câu hỏi về NMSuperMarket.', products: [] }
+    ];
+    setMessages(defaultMessages);
+    localStorage.setItem(storageKey, JSON.stringify(defaultMessages));
+  };
 
   const callApi = async (userMessage, history) => {
     try {
+      // Bỏ tin nhắn chào mừng (đầu tiên) và tin nhắn mới đang gửi (cuối cùng) để tránh trùng lặp
+      const chatHistory = history.slice(1, -1);
+      // Giới hạn chỉ lấy tối đa 14 tin nhắn gần nhất để không vượt quá giới hạn hệ thống
+      const recentHistory = chatHistory.slice(-14);
+      // Gửi tin nhắn đến API chatbot
       const response = await client.post('/chatbot', {
         message: userMessage,
-        history: history.slice(1).map(m => ({ role: m.role, content: m.content }))
+        history: recentHistory.map(m => ({ role: m.role, content: m.content }))
       });
+      // Lấy câu trả lời và các sản phẩm được gợi ý
       const { reply, suggested_products } = response.data.data;
-      return { success: true, reply, products: suggested_products };
+      // Kiểm tra xem có sản phẩm nào được gợi ý không
+      if (suggested_products && suggested_products.length > 0) {
+        // Gợi ý sản phẩm có thể chứa nhiều hơn 5 sản phẩm, giới hạn chỉ lấy 5 sản phẩm
+        const limitedProducts = suggested_products.slice(0, 5);
+        return { success: true, reply, products: limitedProducts };
+      } else {
+        return { success: true, reply, products: [] };
+      }
     } catch (error) {
       console.error('Chatbot error:', error);
       return { success: false };
@@ -43,7 +89,7 @@ export default function ChatbotWidget() {
   const handleSend = async (e) => {
     e?.preventDefault();
     if (!input.trim() && !isRetrying) return;
-
+// Xử lý tin nhắn
     const userMessage = isRetrying ? lastUserMessage : input.trim();
     if (!isRetrying) {
       setInput('');
@@ -98,9 +144,18 @@ export default function ChatbotWidget() {
                 </span>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-2 rounded-full transition-colors">
-              <X size={20} />
-            </button>
+            <div className="flex items-center gap-1">
+              <button 
+                onClick={handleClearHistory} 
+                title="Xóa lịch sử trò chuyện" 
+                className="hover:bg-white/20 p-2 rounded-full transition-colors"
+              >
+                <Trash2 size={18} />
+              </button>
+              <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 p-2 rounded-full transition-colors">
+                <X size={20} />
+              </button>
+            </div>
           </div>
 
           {/* Chat Area */}
@@ -136,10 +191,10 @@ export default function ChatbotWidget() {
                     </button>
                   )}
 
-                  {msg.products && msg.products.length > 0 && (
-                    <div className="mt-1 space-y-3 w-64 pb-2">
-                      {msg.products.slice(0, 2).map(p => (
-                        <div key={p.id} className="w-full bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
+                   {msg.products && msg.products.length > 0 && (
+                    <div className="mt-1 flex gap-3 overflow-x-auto pb-2 max-w-[280px] scrollbar-thin">
+                      {msg.products.slice(0, 5).map(p => (
+                        <div key={p.id} className="w-[200px] flex-shrink-0 bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
                           <ProductCard product={p} />
                         </div>
                       ))}
